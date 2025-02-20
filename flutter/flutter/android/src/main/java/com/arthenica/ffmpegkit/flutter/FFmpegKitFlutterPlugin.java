@@ -662,38 +662,6 @@ public class FFmpegKitFlutterPlugin implements FlutterPlugin, ActivityAware, Met
         }
     }
 
-    @SuppressWarnings("deprecation")
-    protected void init(final BinaryMessenger messenger, final Context context, final Activity activity, final io.flutter.plugin.common.PluginRegistry.Registrar registrar, final ActivityPluginBinding activityBinding) {
-        registerGlobalCallbacks();
-
-        if (methodChannel == null) {
-            methodChannel = new MethodChannel(messenger, METHOD_CHANNEL);
-            methodChannel.setMethodCallHandler(this);
-        } else {
-            Log.i(LIBRARY_NAME, "FFmpegKitFlutterPlugin method channel was already initialised.");
-        }
-
-        if (eventChannel == null) {
-            eventChannel = new EventChannel(messenger, EVENT_CHANNEL);
-            eventChannel.setStreamHandler(this);
-        } else {
-            Log.i(LIBRARY_NAME, "FFmpegKitFlutterPlugin event channel was already initialised.");
-        }
-
-        this.context = context;
-        this.activity = activity;
-
-        if (registrar != null) {
-            // V1 embedding setup for activity listeners.
-            registrar.addActivityResultListener(this);
-        } else {
-            // V2 embedding setup for activity listeners.
-            activityBinding.addActivityResultListener(this);
-        }
-
-        Log.d(LIBRARY_NAME, String.format("FFmpegKitFlutterPlugin %s initialised with context %s and activity %s.", this, context, activity));
-    }
-
     protected void uninit() {
         uninitMethodChannel();
         uninitEventChannel();
