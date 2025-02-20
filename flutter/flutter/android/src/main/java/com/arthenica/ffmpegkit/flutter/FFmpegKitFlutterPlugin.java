@@ -153,14 +153,30 @@ public class FFmpegKitFlutterPlugin implements FlutterPlugin, ActivityAware, Met
         Log.d(LIBRARY_NAME, String.format("FFmpegKitFlutterPlugin created %s.", this));
     }
 
-    public static void registerWith() {
-        final Context context = (registrar.activity() != null) ? registrar.activity() : registrar.context();
-        if (context == null) {
-            Log.w(LIBRARY_NAME, "FFmpegKitFlutterPlugin can not be registered without a context.");
-            return;
+    protected void init(final BinaryMessenger messenger, final Context context, final Activity activity, final ActivityPluginBinding activityBinding) {
+        registerGlobalCallbacks();
+
+        if (methodChannel == null) {
+            methodChannel = new MethodChannel(messenger, METHOD_CHANNEL);
+            methodChannel.setMethodCallHandler(this);
+        } else {
+            Log.i(LIBRARY_NAME, "FFmpegKitFlutterPlugin method channel was already initialised.");
         }
-        FFmpegKitFlutterPlugin plugin = new FFmpegKitFlutterPlugin();
-        plugin.init(registrar.messenger(), context, registrar.activity(), registrar, null);
+
+        if (eventChannel == null) {
+            eventChannel = new EventChannel(messenger, EVENT_CHANNEL);
+            eventChannel.setStreamHandler(this);
+        } else {
+            Log.i(LIBRARY_NAME, "FFmpegKitFlutterPlugin event channel was already initialised.");
+        }
+
+        this.context = context;
+        this.activity = activity;
+
+        activityBinding.addActivityResultListener(this);
+
+
+        Log.d(LIBRARY_NAME, String.format("FFmpegKitFlutterPlugin %s initialised with context %s and activity %s.", this, context, activity));
     }
 
     protected void registerGlobalCallbacks() {
